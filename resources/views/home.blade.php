@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 @section('content')
     <!-- Hero -->
     <section class="hero">
@@ -82,7 +81,7 @@
 </section>
 </div>
 
-{{-- <script>
+<script>
   const searchInput = document.getElementById("searchInput");
 
   searchInput.addEventListener("input", function () {
@@ -94,7 +93,7 @@
       card.style.display = title.includes(searchValue) ? "block" : "none";
     });
   });
-</script> --}}
+</script>
 <script>
     function openModal(id) {
         fetch(`/product/${id}`)
@@ -135,8 +134,6 @@
         }
     }
 </script>
-
-
 
 
 @endsection

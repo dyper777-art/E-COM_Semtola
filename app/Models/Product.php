@@ -1,11 +1,13 @@
 <?php
 
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
+use Illuminate\Http\Request;
 
-class CartController extends Controller
+class Product extends Model
 {
     public function add(Request $request)
     {

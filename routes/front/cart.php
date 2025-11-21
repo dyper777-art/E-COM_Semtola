@@ -1,21 +1,93 @@
 <?php
 
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CatalogController;
+
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use App\Helpers\TelegramHelper;
+use App\Models\Order;
+use Illuminate\Http\Request;
 
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::get('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
-Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+// Show cart
+Route::get('/cart', function () {
+    $cart = session()->get('cart', []);
+    return view('cart.index', compact('cart')); // Make sure the view exists!
+})->name('cart.index');
 
+// Add item to cart
+Route::get('/cart/add/{id}', function ($id) {
+    $product = Product::find($id);
+        if (!$product) abort(404);
 
-Route::post('/checkout', function () {
-    // Clear the cart
+            $cart = session()->get('cart', []);
+            $cart[$id] = [
+    'id' => $product->id,
+    'name' => $product->name,
+    'price' => $product->price,
+    'image' => $product->image,
+    'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
+];
+session()->put('cart', $cart);
+
+    if (!isset($products[$id])) abort(404);
+
+    $cart = session()->get('cart', []);
+        $cart[$id] = [
+        'id' => $product->id,
+        'name' => $product->name,
+        'price' => $product->price,
+        'image' => $product->image,
+        'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
+    ];
+
+    session()->put('cart', $cart);
+
+    return redirect()->route('cart.index')->with('success','Item added!');
+})->name('cart.add');
+
+// Remove item
+Route::delete('/cart/remove/{id}', function ($id) {
+    $cart = session()->get('cart', []);
+    if(isset($cart[$id])) unset($cart[$id]);
+    session()->put('cart', $cart);
+    return redirect()->route('cart.index')->with('success','Item removed!');
+})->name('cart.remove');
+
+// Checkout
+Route::post('/checkout', function (Request $request) {
+    $cart = session()->get('cart', []);
+    if(empty($cart)) return redirect()->route('cart.index')->with('error','Cart is empty!');
+
+    $date = date('d/m/Y');
+    $time = date('h:i A');
+    $message = "🛒 New Order Completed\n\n";
+    $totalPrice = 0;
+    $message .= "$request->name\n";
+    $message .= "$request->phone\n";
+
+    foreach($cart as $item){
+        $subtotal = $item['price'] * $item['quantity'];
+        $totalPrice += $subtotal;
+        $message .= "📦 Product: {$item['name']}\n";
+        $message .= "💲 Price: \${$item['price']}\n";
+        $message .= "🔢 Quantity: {$item['quantity']}\n";
+        $message .= "💰 Total: \${$subtotal}\n\n";
+    }
+    $message .= "🧾 Grand Total: \${$totalPrice}\n";
+    $message .= "📅 Date: {$date}\n";
+    $message .= "🕐 Time: {$time}\n";
+
+    // Save order (if you have an orders table)
+    Order::create([
+        'name'  => $request->name,
+        'phone' => $request->phone,
+        'total' => $totalPrice,
+        'items' => json_encode($cart),
+    ]);
+
+    // Then send Telegram
+    TelegramHelper::send($message);
+
+    // Clear cart
     Session::forget('cart');
-
-    // Redirect back with success message
-    return redirect()->route('cart.index')->with('success', '✅ Payment successful! Your cart is now empty.');
+    return redirect()->route('cart.index')->with('success','✅ Payment successful! Cart cleared.');
 })->name('checkout.process');
-// web.php
-
-// Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');

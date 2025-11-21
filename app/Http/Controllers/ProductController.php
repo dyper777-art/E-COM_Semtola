@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
-    //
-    public function show($id)
-    {
-        $products = [
+    private $products = [
             1 => ['id' => 1,'name' => 'Matcha Teen (White)', 'price' => 14.8, 'image' => 'IMG_2991.PNG', 'description' => 'High-quality white matcha tea.'],
             2 => ['id' => 2,'name' => 'Matcha Teen (Green)', 'price' => 14.8, 'image' => 'IMG_3000.jpg', 'description' => 'High-quality white matcha tea.'],
             3 => ['id' => 3,'name' => 'UMI', 'price' => 38, 'image' => 'IMG_3007.PNG', 'description' => 'High-quality white matcha tea.'],
@@ -23,35 +21,22 @@ class ProductController extends Controller
             11 => ['id' => 11,'name' => 'Kanbayashi Shunsho', 'price' => 45.36, 'image' => 'IMG_3021.jpg', 'description' => 'High-quality white matcha tea.'],
             12 => ['id' => 12,'name' => 'Tsubokiri matcha', 'price' => 39, 'image' => 'IMG_3023.jpg', 'description' => 'High-quality white matcha tea.'],
 
-        ];
-        if (!isset($products[$id])) {
-            return response()->json(['error' => 'Product not found.']);
-        }
+];
 
-        return response()->json($products[$id]);
-
-        if (!isset($products[$id])) {
-            abort(404);
-        }
-        $product = Product::find($id);
-
-        // $product = $products[$id];
-        // return view('product.show', compact('product'));
-
-        // 🛒 Add product to session cart
-        $cart = session()->get('cart', []);
-        $cart[$id] = [
-            'id' => $product['id'],
-            'name' => $product['name'],
-            'price' => $product['price'],
-            'image' => $product['image'],
-            'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
-        ];
-
-        session()->put('cart', $cart);
-
-        return redirect()->back()->with('success', 'Item added to cart!');
+    // Show all products
+    public function index()
+    {
+        $products = Product::all();
+        return view('home', compact('products'));
     }
-    
-    
+
+    // Return single product as JSON for modal
+    public function show($id)
+    {
+        if (!isset($this->products[$id])) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        return response()->json($this->products[$id]);
+    }
 }

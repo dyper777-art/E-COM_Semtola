@@ -40,24 +40,34 @@ body {
       font-weight: bold;
     }
 
-    .product-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 30px;
-      padding: 40px;
-    }
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 20px;
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
 
-    .product-card {
-      width: 200px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      background-color: white;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s ease;
-    }
+
+.product-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  width: 100%;
+  max-width: 220px;
+  margin: auto;
+}
+
 
     .product-card:hover {
       transform: translateY(-5px);
@@ -143,4 +153,80 @@ body {
     transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .catalog-title {
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  header {
+    flex-direction: column;
+    padding: 10px 20px;
+    align-items: flex-start;
+  }
+
+  nav a {
+    margin: 5px 10px;
+    font-size: 14px;
+  }
+
+  .btn-view,
+  .btn-add {
+    padding: 0.3rem 0.8rem;
+    font-size: 14px;
+  }
+
+  .modal-content {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .product-title {
+    font-size: 14px;
+  }
+
+  .product-price {
+    font-size: 13px;
+  }
+
+  .product-image,
+  .imagesize {
+    height: 160px;
+  }
+
+  .product-search input {
+    width: 90%;
+    max-width: 300px;
+    font-size: 14px;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 20px;
+  }
+
+  .footer-section {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+.product-search {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0 10px;
+  padding: 0 1rem;
+}
+
+.product-search input {
+  padding: 10px;
+  width: 100%;
+  max-width: 300px;
+  font-size: 16px;
+  border: 1px solid green;
+  border-radius: 4px;
 }
