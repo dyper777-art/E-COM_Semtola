@@ -22,8 +22,10 @@
     </div>
 
     <!-- Navigation buttons -->
-    <button id="prev" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded">‹</button>
-    <button id="next" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded">›</button>
+    <button id="prev"
+        class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded">‹</button>
+    <button id="next"
+        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded">›</button>
 </div>
 
 <script>

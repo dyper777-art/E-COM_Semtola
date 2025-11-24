@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>TEEN.</title>
@@ -16,13 +17,14 @@
 
 
 </head>
+
 <body>
     <div class="page-wrapper">
-    @include('partials.header')
+        @include('partials.header')
 
-    <main>
-        @yield('content')
-    </main>
+        <main>
+            @yield('content')
+        </main>
     </div>
 
     @include('partials.footer')

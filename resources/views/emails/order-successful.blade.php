@@ -1,8 +1,11 @@
-<h2>Thank you for your order!</h2>
-<p>Here’s what you bought:</p>
-<ul>
-@foreach($cart as $item)
-    <li>{{ $item['name'] }} - {{ $item['quantity'] }} x ${{ $item['price'] }}</li>
-@endforeach
-</ul>
+<h1>Order Successful</h1>
+
+<p>Thank you for your order!</p>
+
 <p>Total: ${{ $total }}</p>
+
+<ul>
+    @foreach ($cart as $item)
+        <li>{{ $item['name'] }} - Qty: {{ $item['quantity'] }} - Price: ${{ $item['price'] }}</li>
+    @endforeach
+</ul>

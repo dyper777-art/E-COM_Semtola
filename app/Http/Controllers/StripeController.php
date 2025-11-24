@@ -14,15 +14,16 @@ class StripeController extends Controller
     public function createCheckoutSession(Request $request)
     {
 
-
-
-        $cart = session()->get('cart', []);
-        if (empty($cart)) {
-            return redirect()->back()->with('error', 'Your cart is empty.');
-        }
-
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
+        $cart = session()->get('cart', []);
+
+        if (empty($cart)) {
+            $session_id = $request->query('session_id');
+            if (!$session_id) {
+                return redirect()->route('cart.index')->with('error', 'Session ID missing.');
+            }
+        }
 
         $line_items = [];
         foreach ($cart as $id => $item) {
@@ -36,7 +37,7 @@ class StripeController extends Controller
             ];
         }
 
-
+        Stripe::setApiKey(env('STRIPE_SECRET'));
         $session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
 
@@ -47,7 +48,7 @@ class StripeController extends Controller
             'customer_email' => $request->email, // <-- here inside the array
             'phone_number_collection' => [
                 'enabled' => true, // <--- This enables phone input
-                ],
+            ],
             'metadata' => [
                 'cart' => json_encode($cart),
             ],
@@ -58,33 +59,34 @@ class StripeController extends Controller
 
     public function success(Request $request)
     {
+
         Stripe::setApiKey(env('STRIPE_SECRET'));
+        $cart = session()->get('cart', []);
 
-    $cart = session()->get('cart', []);
+        if (!empty($cart)) {
+            $email = $session->customer_details->email ?? 'noemail@example.com';
 
-    if (!empty($cart)) {
+            // Stripe::setApiKey(env('STRIPE_SECRET'));
+            $session_id = $request->query('session_id');
 
-        // Stripe::setApiKey(env('STRIPE_SECRET'));
-        $session_id = $request->query('session_id');
+            if (!$session_id) {
+                return redirect()->route('cart.index')->with('error', 'Session ID missing.');
+            }
 
-    if (!$session_id) {
-        return redirect()->route('cart.index')->with('error', 'Session ID missing.');
-    }
+            // 1. Get checkout session
+            $session = \Stripe\Checkout\Session::retrieve($session_id);
 
-    // 1. Get checkout session
-    $session = \Stripe\Checkout\Session::retrieve($session_id);
+            // 2. Get customer info safely
+            $session = Session::retrieve($session_id);
 
-    // 2. Get customer info safely
-    $session = Session::retrieve($session_id);
+            $email = $session->customer_details->email ?? 'noemail@example.com';
+            $name = $session->customer_details->name ?? 'No name';
+            $phone = $session->customer_details->phone ?? 'No phone';
 
-    $email = $session->customer_details->email ?? 'No email';
-    $name  = $session->customer_details->name ?? 'No name';
-    $phone = $session->customer_details->phone ?? 'No phone';
+            $message = "🛒 <b>New Successful Order</b>\n\n";
+            $total = 0;
 
-        $message = "🛒 <b>New Successful Order</b>\n\n";
-        $total = 0;
-
-        foreach ($cart as $item) {
+            foreach ($cart as $item) {
                 $qty = $item['quantity'];
                 $price = $item['price'];
                 $subtotal = $qty * $price;
@@ -102,19 +104,20 @@ class StripeController extends Controller
             $message .= "📅 Date: " . date('d/m/Y') . "\n";
             $message .= "🕒 Time: " . date('h:i A') . "\n";
 
-        \App\Helpers\TelegramHelper::send($message);
-        // after retrieving $cart and calculating $total
-        // Mail::to($email)->send(new \App\Mail\OrderSuccessful($cart, $total));
+            \App\Helpers\TelegramHelper::send($message);
+            // after retrieving $cart and calculating $total
+            // Mail::to('semtola7@gmail.com')->send(new \App\Mail\OrderSuccessful($cart, $total));
 
 
+
+        }
+
+        // clear the cart
+        session()->forget('cart');
+
+        return redirect()->route('cart.index')
+            ->with('success', 'Payment successful! Your cart has been cleared.');
     }
-
-    // clear the cart
-    session()->forget('cart');
-
-    return redirect()->route('cart.index')
-        ->with('success', 'Payment successful! Your cart has been cleared.');
-}
 
     public function cancel()
     {
@@ -170,6 +173,6 @@ class StripeController extends Controller
 
     //     return response('OK', 200);
     // }
-    
-    
+
+
 }

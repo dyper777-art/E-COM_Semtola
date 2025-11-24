@@ -34,8 +34,8 @@ class StripeWebhookController extends Controller
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
 
-            $cart = isset($session->metadata->cart) 
-                ? json_decode($session->metadata->cart, true) 
+            $cart = isset($session->metadata->cart)
+                ? json_decode($session->metadata->cart, true)
                 : [];
 
             $message = "🛒 <b>New Stripe Order Paid</b>\n\n";
@@ -53,7 +53,7 @@ class StripeWebhookController extends Controller
             }
 
             $message .= "🧾 <b>Total:</b> \${$total}\n";
-            // $message .= "📧 Customer Email: {$email}\n";
+            $message .= "📧 Customer Email: {$email}\n";
             $message .= "📅 Date: " . date('d/m/Y') . "\n";
             $message .= "🕒 Time: " . date('h:i A') . "\n";
 

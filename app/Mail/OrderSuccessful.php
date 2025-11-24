@@ -2,8 +2,7 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Bus\Queueable;   
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -11,22 +10,30 @@ use Illuminate\Queue\SerializesModels;
 
 class OrderSuccessful extends Mailable
 {
+    public array $cart;
+    public float $total;
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($cart, $total)
+    public function __construct(array $cart, float $total)
     {
         $this->cart = $cart;
         $this->total = $total;
     }
+    
     public function build()
     {
-        return $this->subject('Your Order Receipt')
-                    ->view('emails.order-successful');
+        return $this->subject('Your Order was Successful')
+                    ->markdown('emails.orders.successful', [
+                        'cart' => $this->cart,
+                        'total' => $this->total,
+                    ]);
     }
+    
     /**
+     * 
      * Get the message envelope.
      */
     public function envelope(): Envelope

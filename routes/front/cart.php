@@ -16,22 +16,24 @@ Route::get('/cart', function () {
 // Add item to cart
 Route::get('/cart/add/{id}', function ($id) {
     $product = Product::find($id);
-        if (!$product) abort(404);
-
-            $cart = session()->get('cart', []);
-            $cart[$id] = [
-    'id' => $product->id,
-    'name' => $product->name,
-    'price' => $product->price,
-    'image' => $product->image,
-    'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
-];
-session()->put('cart', $cart);
-
-    if (!isset($products[$id])) abort(404);
+    if (!$product)
+        abort(404);
 
     $cart = session()->get('cart', []);
-        $cart[$id] = [
+    $cart[$id] = [
+        'id' => $product->id,
+        'name' => $product->name,
+        'price' => $product->price,
+        'image' => $product->image,
+        'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
+    ];
+    session()->put('cart', $cart);
+
+    if (!isset($products[$id]))
+        abort(404);
+
+    $cart = session()->get('cart', []);
+    $cart[$id] = [
         'id' => $product->id,
         'name' => $product->name,
         'price' => $product->price,
@@ -41,21 +43,25 @@ session()->put('cart', $cart);
 
     session()->put('cart', $cart);
 
-    return redirect()->route('cart.index')->with('success','Item added!');
+    return redirect()->route('cart.index')->with('success', 'Item added!');
 })->name('cart.add');
 
 // Remove item
 Route::delete('/cart/remove/{id}', function ($id) {
     $cart = session()->get('cart', []);
-    if(isset($cart[$id])) unset($cart[$id]);
+    if (isset($cart[$id]))
+        unset($cart[$id]);
     session()->put('cart', $cart);
-    return redirect()->route('cart.index')->with('success','Item removed!');
+    return redirect()->route('cart.index')->with('success', 'Item removed!');
 })->name('cart.remove');
+
+
 
 // Checkout
 Route::post('/checkout', function (Request $request) {
     $cart = session()->get('cart', []);
-    if(empty($cart)) return redirect()->route('cart.index')->with('error','Cart is empty!');
+    if (empty($cart))
+        return redirect()->route('cart.index')->with('error', 'Cart is empty!');
 
     $date = date('d/m/Y');
     $time = date('h:i A');
@@ -64,7 +70,7 @@ Route::post('/checkout', function (Request $request) {
     $message .= "$request->name\n";
     $message .= "$request->phone\n";
 
-    foreach($cart as $item){
+    foreach ($cart as $item) {
         $subtotal = $item['price'] * $item['quantity'];
         $totalPrice += $subtotal;
         $message .= "📦 Product: {$item['name']}\n";
@@ -78,7 +84,7 @@ Route::post('/checkout', function (Request $request) {
 
     // Save order (if you have an orders table)
     Order::create([
-        'name'  => $request->name,
+        'name' => $request->name,
         'phone' => $request->phone,
         'total' => $totalPrice,
         'items' => json_encode($cart),
@@ -89,5 +95,5 @@ Route::post('/checkout', function (Request $request) {
 
     // Clear cart
     Session::forget('cart');
-    return redirect()->route('cart.index')->with('success','✅ Payment successful! Cart cleared.');
+    return redirect()->route('cart.index')->with('success', '✅ Payment successful! Cart cleared.');
 })->name('checkout.process');
