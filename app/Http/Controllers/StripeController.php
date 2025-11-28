@@ -106,7 +106,7 @@ class StripeController extends Controller
 
             \App\Helpers\TelegramHelper::send($message);
             // after retrieving $cart and calculating $total
-            // Mail::to('semtola7@gmail.com')->send(new \App\Mail\OrderSuccessful($cart, $total));
+            // Mail::to($request->email)->send(new OrderSuccessful($cart, $total));
 
 
 
@@ -116,7 +116,7 @@ class StripeController extends Controller
         session()->forget('cart');
 
         return redirect()->route('cart.index')
-            ->with('success', 'Payment successful! Your cart has been cleared.');
+            ->with('stripe.success', 'Payment successful! Your cart has been cleared.');
     }
 
     public function cancel()

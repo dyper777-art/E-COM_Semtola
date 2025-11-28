@@ -4,7 +4,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Product;
 use Illuminate\Http\Request;
 
 class Product extends Model

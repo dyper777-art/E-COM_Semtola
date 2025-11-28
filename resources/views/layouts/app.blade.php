@@ -17,6 +17,14 @@
 
 
 </head>
+<style>
+#qrImage {
+    display: block;
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+}
+</style>
 
 <body>
     <div class="page-wrapper">
@@ -29,6 +37,5 @@
 
     @include('partials.footer')
 </body>
-<a href="{{ route('cart.index') }}">Cart</a>
 
 </html>

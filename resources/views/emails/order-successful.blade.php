@@ -1,11 +1,7 @@
-<h1>Order Successful</h1>
+<h2>Thank you for your order!</h2>
 
-<p>Thank you for your order!</p>
+<p>Scan the KHQR to complete your payment:</p>
 
-<p>Total: ${{ $total }}</p>
+<img src="data:image/png;base64,{{ $qrImage }}" width="220">
 
-<ul>
-    @foreach ($cart as $item)
-        <li>{{ $item['name'] }} - Qty: {{ $item['quantity'] }} - Price: ${{ $item['price'] }}</li>
-    @endforeach
-</ul>
+<p>Total: <strong>${{ number_format($total,2) }}</strong></p>
