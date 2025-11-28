@@ -188,7 +188,9 @@ class BakongController extends Controller
             'message' => 'Your payment was processed successfully via Bakong KHQR!',
             'order_number' => session('order_number', 'N/A'),
             'timestamp' => now()->format('F j, Y, g:i a')
+            
         ]);
+        
     }
 
     /**

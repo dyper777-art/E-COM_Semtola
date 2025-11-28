@@ -120,7 +120,7 @@
                                     merchantName: 'Teen',
                                     merchantCity: 'PHNOM PENH',
                                     currency: \KHQR\Helpers\KHQRData::CURRENCY_USD,
-                                    amount: 0.01 #this is static price
+                                    amount: 0.01 #$total
                                 );
 
                                 $response = \KHQR\BakongKHQR::generateIndividual($individualInfo);
@@ -141,6 +141,18 @@
                                 if (!$qrString) {
                                     throw new \Exception('KHQR did not return QR payload');
                                 }
+
+                                // ✅ Send Telegram notification
+                                $telegramMessage = "🧾 <b>New KHQR Payment Request</b>\n\n";
+                                $telegramMessage .= "💰 <b>Amount:</b> $" . number_format($total, 2) . "\n";
+                                $telegramMessage .= "🌍 <b>Currency:</b> USD\n";
+                                $telegramMessage .= "🏪 <b>Merchant:</b> Teen\n";
+                                $telegramMessage .= "👤 <b>Account:</b> sem_tola@aclb\n\n";
+                                $telegramMessage .= "📅 <b>Date:</b> " . date('d/m/Y') . "\n";
+                                $telegramMessage .= "🕒 <b>Time:</b> " . date('h:i A') . "\n";
+                                $telegramMessage .= "🔗 <b>Type:</b> KHQR Payment\n";
+
+                                \App\Helpers\TelegramHelper::send($telegramMessage);
 
                                 // DEBUG: Show the generated QR string
                                 echo "<div style='background: #f8f9fa; padding: 8px; margin: 8px 0; border-radius: 4px; font-size: 10px; word-break: break-all;'>";
