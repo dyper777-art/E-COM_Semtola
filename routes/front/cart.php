@@ -14,37 +14,37 @@ Route::get('/cart', function () {
 })->name('cart.index');
 
 // Add item to cart
-Route::get('/cart/add/{id}', function ($id) {
-    $product = Product::find($id);
-    if (!$product)
-        abort(404);
+// Route::get('/cart/add/{id}', function ($id) {
+//     $product = Product::find($id);
+//     if (!$product)
+//         abort(404);
 
-    $cart = session()->get('cart', []);
-    $cart[$id] = [
-        'id' => $product->id,
-        'name' => $product->name,
-        'price' => $product->price,
-        'image' => $product->image,
-        'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
-    ];
-    session()->put('cart', $cart);
+//     $cart = session()->get('cart', []);
+//     $cart[$id] = [
+//         'id' => $product->id,
+//         'name' => $product->name,
+//         'price' => $product->price,
+//         'image' => $product->image,
+//         'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
+//     ];
+//     session()->put('cart', $cart);
 
-    if (!isset($products[$id]))
-        abort(404);
+//     if (!isset($products[$id]))
+//         abort(404);
 
-    $cart = session()->get('cart', []);
-    $cart[$id] = [
-        'id' => $product->id,
-        'name' => $product->name,
-        'price' => $product->price,
-        'image' => $product->image,
-        'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
-    ];
+//     $cart = session()->get('cart', []);
+//     $cart[$id] = [
+//         'id' => $product->id,
+//         'name' => $product->name,
+//         'price' => $product->price,
+//         'image' => $product->image,
+//         'quantity' => ($cart[$id]['quantity'] ?? 0) + 1
+//     ];
 
-    session()->put('cart', $cart);
+//     session()->put('cart', $cart);
 
-    return redirect()->route('cart.index')->with('success', 'Item added!');
-})->name('cart.add');
+//     return redirect()->route('cart.index')->with('success', 'Item added!');
+// })->name('cart.add');
 
 // Remove item
 Route::delete('/cart/remove/{id}', function ($id) {
