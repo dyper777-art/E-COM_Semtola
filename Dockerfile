@@ -1,27 +1,22 @@
-# Dockerfile
-
-# Use PHP 8 with Apache
 FROM php:8.2-apache
 
-# Set working directory
 WORKDIR /var/www/html
 
-# Copy app files
 COPY . .
 
-# Install dependencies
+# Install PHP extensions & dependencies
 RUN apt-get update && apt-get install -y libzip-dev unzip git \
-    && docker-php-ext-install pdo_mysql zip
+    && docker-php-ext-install pdo_mysql zip \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-# Install Composer
+# Install Composer & dependencies
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');" \
     && composer install --no-dev --optimize-autoloader
 
-# Expose port from Cloud Run
-ENV PORT 8080
-EXPOSE 8080
+# Set Apache DocumentRoot to Laravel public
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
-# Start Laravel server on $PORT
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+EXPOSE 8080
